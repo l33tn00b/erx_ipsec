@@ -2,8 +2,9 @@
 IPSec connection ER-X to Ubuntu host
 
 # Edgerouter
-Settings:  
+- Settings:  
 ![Settings EdgeRouter](https://github.com/l33tn00b/erx_ipsec/blob/main/settings_er.png)
+- Add Route: Routing -> Tab: Routes -> Button: Add Static Route, Type: Gateway
 
 # Ubuntu Host
 - need to have strongswan installed
