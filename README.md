@@ -35,9 +35,15 @@ IPSec connection ER-X to Ubuntu host
           # perfect forward secrecy, please
           pfs=yes        
   ```
-- since this is a bogus net on out server, add an appropriate ip to the loopback interface
+- since this is a bogus net on our server, add an appropriate ip to the loopback interface
   `ip addr add 10.8.5.1/24 dev lo `
 - add route: `ip route add 192.168.3.0/24 via 10.8.5.1`
+
+# USG
+Clients need to know route to our newly attached subnet:
+- Configure USG to add custom DHCP option number 121 (https://community.ui.com/questions/Custom-DHCP-Option-33-Static-Route-in-Unifi-Controller/540f8c72-24fb-44a7-86a0-50802bec0192)
+  - Networks -> DHCP Section -> Add Custom DHCP Option
+  - See https://www.medo64.com/2018/01/configuring-classless-static-route-option/ for a suitable calculator
 
 # Caveats
 - The EdgeRouter will only start the connection when traffic is detected for the remote subnet
