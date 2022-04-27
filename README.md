@@ -39,11 +39,17 @@ IPSec connection ER-X to Ubuntu host
 - since this is a bogus net on our server, add an appropriate ip to the loopback interface
   `ip addr add 10.8.5.1/24 dev lo `
 - add route: `ip route add 192.168.3.0/24 via 10.8.5.1`
-- yaddayaddayadda....
-(- (maybe)we should think about using vti/gre so we don't mess up routing with clients having dialled in via openvpn): https://docs.strongswan.org/strongswan-docs/5.9/features/routeBasedVpn.html because right now, we do `-A POSTROUTING -s 10.8.0.0/8 -o eth0 -j MASQUERADE   ` in /etc/ufw/before.rules. Thus, anything going out there will get natted and will not match the defined security policy of 10.8.5.0/25 == 192.168.3.0
-- trouble is, packets (e.g. ping) get routed out eth0 (with a public ip) to a private destination (coming in from tun0, do a tcpdump -i tun0 to see incoming, do a tcpdump -i eth0 to see outgoing, unencapsulated/encrypted (ping) packets)
-- take care of allowing traffic from/to interfaces in ufw (/etc/ufw/before.rules): "DEFAULT_FORWARD_POLICY variable in /etc/default/ufw from a value of "DROP" to "ACCEPT" to forward all packets regardless of the settings of the user interface." (https://wiki.archlinux.org/title/Uncomplicated_Firewall)
-- See also: VTI on edgerouter: https://community.ui.com/questions/EdgeRouter-Routing-problem-with-IPsec-site-to-site-VPN-using-VTI-static-routing/fa1d4813-c639-4d5f-bf86-66bbdba51dee)
+- yaddayaddayadda.... what now?
+- when adding almost all of 10.8.0.0 (i.e. 10.8.0.0/16 as rightsubnet we see the ping going out eth0: 
+  ```
+  using 172.31.1.1 as nexthop and eth0 as dev to reach 85.212.yyy.yy/32
+  Apr 27 23:37:53 charon[124122]: 11[KNL] installing route: 192.168.3.0/24 via 172.31.1.1 src 10.8.5.1 dev eth0
+  ```
+  -> tcpdump will show unencrypted packets...
+  - (maybe)we should think about using vti/gre so we don't mess up routing with clients having dialled in via openvpn): https://docs.strongswan.org/strongswan-docs/5.9/features/routeBasedVpn.html because right now, we do `-A POSTROUTING -s 10.8.0.0/8 -o eth0 -j MASQUERADE   ` in /etc/ufw/before.rules. Thus, anything going out there will get natted and will not match the defined security policy of 10.8.5.0/25 == 192.168.3.0
+  - trouble is, packets (e.g. ping) get routed out eth0 (with a public ip) to a private destination (coming in from tun0, do a tcpdump -i tun0 to see incoming, do a tcpdump -i eth0 to see outgoing, unencapsulated/encrypted (ping) packets)
+  - take care of allowing traffic from/to interfaces in ufw (/etc/ufw/before.rules): "DEFAULT_FORWARD_POLICY variable in /etc/default/ufw from a value of "DROP" to "ACCEPT" to forward all packets regardless of the settings of the user interface." (https://wiki.archlinux.org/title/Uncomplicated_Firewall)
+  - See also: VTI on edgerouter: https://community.ui.com/questions/EdgeRouter-Routing-problem-with-IPsec-site-to-site-VPN-using-VTI-static-routing/fa1d4813-c639-4d5f-bf86-66bbdba51dee)
 
 # USG
 Clients need to know route to our newly attached subnet:
