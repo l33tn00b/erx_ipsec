@@ -38,6 +38,8 @@ IPSec connection ER-X to Ubuntu host
 - since this is a bogus net on our server, add an appropriate ip to the loopback interface
   `ip addr add 10.8.5.1/24 dev lo `
 - add route: `ip route add 192.168.3.0/24 via 10.8.5.1`
+- (aybe)we should think about using vti (virtual tunnel interfaces so we don't mess up routing with clients having dialled in via openvpn): https://docs.strongswan.org/strongswan-docs/5.9/features/routeBasedVpn.html because right now, we do `-A POSTROUTING -s 10.8.0.0/8 -o eth0 -j MASQUERADE   ` in /etc/ufw/before.rules. Thus, anything going out there will get natted and will not match the defined security policy of 10.8.5.0/25 == 192.168.3.0
+- 
 
 # USG
 Clients need to know route to our newly attached subnet:
