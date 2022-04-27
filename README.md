@@ -40,6 +40,7 @@ IPSec connection ER-X to Ubuntu host
 - add route: `ip route add 192.168.3.0/24 via 10.8.5.1`
 - (maybe)we should think about using vti/gre so we don't mess up routing with clients having dialled in via openvpn): https://docs.strongswan.org/strongswan-docs/5.9/features/routeBasedVpn.html because right now, we do `-A POSTROUTING -s 10.8.0.0/8 -o eth0 -j MASQUERADE   ` in /etc/ufw/before.rules. Thus, anything going out there will get natted and will not match the defined security policy of 10.8.5.0/25 == 192.168.3.0
 - trouble is, packets (e.g. ping) get routed out eth0 (with a public ip) to a private destination (coming in from tun0, do a tcpdump -i tun0 to see incoming, do a tcpdump -i eth0 to see outgoing, unencapsulated/encrypted (ping) packets)
+- take care of allowing traffic from/to interfaces in ufw (/etc/ufw/before.rules): "DEFAULT_FORWARD_POLICY variable in /etc/default/ufw from a value of "DROP" to "ACCEPT" to forward all packets regardless of the settings of the user interface." (https://wiki.archlinux.org/title/Uncomplicated_Firewall)
 
 # USG
 Clients need to know route to our newly attached subnet:
