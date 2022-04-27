@@ -8,6 +8,7 @@ IPSec connection ER-X to Ubuntu host
 
 # Ubuntu Host
 - need to have strongswan installed
+- If you don't want this to be valid for any peer: https://help.ui.com/hc/en-us/articles/115013382567-EdgeRouter-Site-to-Site-VPN-Behind-NAT
 - create config file on server with public ip named `<conn name>.conf`
   ```
   conn <name>
